@@ -1,6 +1,7 @@
 body{
   font-family: 'Poppins', sans-serif;
   background-color: white;
+  margin-bottom: 60px;
 }
 
 h2{
@@ -31,6 +32,15 @@ h2{
 
 .date{
   margin: 0 100px;
+}
+
+/* MAINTAINER */
+.topNav{
+  border-top-left-radius: 10px;
+}
+
+.bottomNav{
+  border-bottom-left-radius: 10px;
 }
 
 

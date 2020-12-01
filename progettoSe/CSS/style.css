@@ -1,0 +1,81 @@
+body{
+  font-family: 'Poppins', sans-serif;
+  background-color: white;
+}
+
+h2{
+  text-align: center;
+  margin: 20px auto;
+  font-weight: 600;
+}
+
+.header, .footer{
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: auto !important;
+  max-width: 1240px;
+}
+
+.btn-blue, .bg-blue {
+  background-color: #3274D6;
+  color: white;
+}
+
+.btn-blue:hover{
+  background-color: #2868c7;
+}
+
+.btn-outline-primary:hover{
+  background-color: #2868c7;
+}
+
+.date{
+  margin: 0 100px;
+}
+
+
+/* LOGIN PAGE */
+.login-box{
+  margin-top: 8rem;
+  width: 20rem;
+  background-color:  rgba(0,0,0,.03);
+  padding: 20px 20px 30px 20px;
+  border-radius: 20px;
+  box-shadow: 0 0  10px;
+}
+
+/* .photo_logo{
+  border-radius: 50%;
+} */
+
+#username{
+  border-bottom: -1;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-top: 10px;
+}
+
+#password {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Textarea custom css */
+
+textarea {
+  resize: none;
+}
+
+/* form customization */
+form.striped-rows .form-group:nth-child(even) {
+  background-color: rgba(0,0,0,.05);
+}
+
+.form-group{
+  margin-bottom: 0;
+}
+
+/* list-group-item*/
+.list-group-item:nth-child(odd){
+  background-color: rgba(0,0,0,.05);
+}

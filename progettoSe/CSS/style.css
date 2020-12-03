@@ -54,10 +54,6 @@ h2{
   box-shadow: 0 0  10px;
 }
 
-/* .photo_logo{
-  border-radius: 50%;
-} */
-
 #username{
   border-bottom: -1;
   border-bottom-right-radius: 0;
@@ -69,6 +65,25 @@ h2{
     border-top-left-radius: 0;
     border-top-right-radius: 0;
 }
+
+/* REGISTRATIO PAGE FOR SA */
+.registration-box{
+  width: 50rem;
+  background-color:  rgba(0,0,0,.03);
+  padding: 20px 50px 30px 50px;
+  border-radius: 20px;
+  box-shadow: 0 0  10px;
+}
+
+/* PROFILE BOX */
+.profile-box{
+  width: 30rem;
+  background-color:  rgba(0,0,0,.03);
+  padding: 20px 50px 30px 50px;
+  border-radius: 20px;
+  box-shadow: 0 0  10px;
+}
+
 
 /* Textarea custom css */
 

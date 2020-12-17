@@ -1,5 +1,3 @@
-
-
 // add weeks buttons
 function addWeeks() {
   for (var i = 1; i <= 53; i++) {
@@ -38,7 +36,7 @@ function addCollapseTarget(id) {
         </table>
       </div>
       <div class='text-center'>
-        <button type="button" class="btn btn-sm btn-warning text-right disabled" data-toggle="modal" data-target="#planModal" data-week="` + id + `">Add Activity</button>
+        <button type="button" class="btn btn-sm btn-warning text-right" data-toggle="modal" data-target="#planModal" data-week="` + id + `">Add Activity</button>
       </div>
     </div>
   `;
@@ -47,43 +45,40 @@ function addCollapseTarget(id) {
 };
 
 function loadTable() {
-  // jQuery.getJSON('activityByWeek.json', function(data) {});
-
-  $.getJSON("/progettoSe/php/getData.php", function(dataJSON) {
-    console.log(dataJSON);
+  $.getJSON("../php/getData.php", function(dataJSON) {
     var tr;
-    for (var i = 0; i < dataJSON.length; i++) {
-      var week = dataJSON[i].week;
-      $.each(dataJSON[i].activities, function(key, value) {
-        //console.log(value);
-        var activity = value.id + " - " + value.area + " - " + value.type + " - " + value.intTime + "'";
-        var tableData = `
+    $.each(dataJSON, function(key, value) {
+      var week = value.week;
+      var activity = value.id + " - " + value.area + " - " + value.type + " - " + value.intTime + "'";
+      var tableData = `
           <tr>
             <td>` + value.id + `</td>
             <td>` + value.area + `</td>
             <td>` + value.type + `</td>
             <td>` + value.intTime + `</td>
             <td>
-              <button data-toggle="modal" data-target="#selectedModal" data-week="` + week + `" data-activity="` + activity + `" id="` + value.id + `" type="button" class="btn btn-sm btn-block btn-outline-primary">Select</button>
+              <form action="../php/deleteActivity.php" method="post">
+                <button data-toggle="modal" data-target="#selectedModal" data-week="` + week + `" data-activity="` + activity + `" id="` + value.id + `" type="button" class="btn btn-sm btn-outline-primary"><i class="fas fa-clipboard-check"></i>  Select</button>
+  							<input type= "hidden" name="activityId" value="` + value.id + `">
+  							<button type="submit" class="btn btn-sm btn-warning ml-3"><i class="far fa-trash-alt" aria-hidden="true"></i> Delete</button>
+  						</form>
             </td>
           </tr>
           `;
-        $(".tbody" + week).append(tableData);
-        $("#table" + week).addClass("");
-        //              table-striped table-hover
-      });
-      //console.log(dataJSON[i].week);
-    }
+      $(".tbody" + week).append(tableData);
+      $("#table" + week).addClass("");
+    });
   });
 };
 
-
-addWeeks();
-loadTable();
-$("#collapse" + currentWeek).collapse();
+$(document).ready(function(){
+  $(".header").addClass("fixed-top");
+  addWeeks();
+  loadTable();
+  $("#collapse" + currentWeek).collapse();
+});
 
 $("#accordionWeeks").on('shown.bs.collapse', function(event) {
-  //console.log(event);
   $('[data-target="#' + event.target.id + '"]').removeClass('btn-outline-secondary').addClass("btn-blue");
   var element = document.getElementById(event.target.id);
   element.scrollIntoView({
@@ -93,7 +88,6 @@ $("#accordionWeeks").on('shown.bs.collapse', function(event) {
 });
 
 $("#accordionWeeks").on('hide.bs.collapse', function(event) {
-  //console.log(event);
   $('[data-target="#' + event.target.id + '"]').removeClass('btn-blue').addClass("btn-outline-secondary");
 });
 
@@ -107,27 +101,31 @@ $('#planModal').on('show.bs.modal', function(event) {
 });
 
 $('#selectedModal').on('show.bs.modal', function(event) {
-  var button = $(event.relatedTarget); // Button that triggered the modal
-  // console.log(button);
+  var button = $(event.relatedTarget);
   var activity = button.data('activity'); // Extract info from data-* attributes
   var id = button.attr("id");
   var week = button.data("week");
   var modal = $(this)
 
-  $.getJSON("/progettoSe/php/getData.php?id="+ id , function(result) {
+  $.getJSON("../php/getData.php?id=" + id, function(result) {
     modal.find('.modal-title').text('Selected activity # ' + result.id);
     modal.find('#selected-activity-week').text(result.week);
-    const activityItem = result.id + " - " + result.site + " - " + result.type + " - " + result.intTime +"'";
+    const activityItem = result.id + " - " + result.area + " - " + result.type + " - " + result.intTime + "'";
     modal.find('#selected-activity').text(activityItem);
+    modal.find('#SMPFile').attr('href', result.SMP);
+    modal.find('#selected-activity-description').text(result.description);
 
-
+    modal.find("#skillsNeeded").text('');
     result.skills.forEach((skill) => {
-      console.log(skill);
       modal.find("#skillsNeeded").append('<li class="list-group-item">' + skill + '</li>');
     });
-
-
   });
-
-
 });
+
+$('#selectedModal').on('hidden.bs.modal', function(event) {
+  var modal = $(this)
+  modal.find('#selected-activity-workNote').text('');
+  modal.find('#selected-activity-description').text('');
+
+  modal.find("#skillsNeeded").text('');
+})

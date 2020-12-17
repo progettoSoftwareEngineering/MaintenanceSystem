@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Dic 03, 2020 alle 12:23
+-- Creato il: Dic 16, 2020 alle 15:35
 -- Versione del server: 10.1.38-MariaDB
 -- Versione PHP: 7.3.2
 
@@ -45,10 +45,10 @@ CREATE TABLE `accounts` (
 --
 
 INSERT INTO `accounts` (`id`, `name`, `surname`, `username`, `password`, `email`, `gender`, `birthday`, `userType`) VALUES
-(1, 'ATVE', 'EVTA', 'bingtbangt', '123456', 'atve@evta.com', 'NS', '2021-05-10', 'SA'),
-(2, 'Veronica', 'Salvati', 'vsal', '123456', 'vasl@salvini.com', 'NS', '2020-12-22', 'PL'),
-(3, 'Toni', 'Pannese', 't.pannese', '123456', 't.pannese@pannese.t.com', 'M', '2021-01-01', 'PL'),
-(4, 'Tatonno', 'Toni', 'a.solimine', '123456', 'a.solimine@pannese.t.com', 'NS', '2021-01-01', 'PL');
+(1, 'Alex', 'Solimine', 'alessio', '12345', 'alex@solimine.com', 'M', '1996-05-10', 'SA'),
+(2, 'Emidio', 'Pierro', 'emidio', '12345', 'emidio@pierro.com', 'M', '1997-07-21', 'RM'),
+(3, 'Toni', 'Pannese', 'toni', '12345', 'toni@pannese.com', 'NS', '2021-02-10', 'PL'),
+(4, 'Veronica', 'Salvati', 'veronica', '12345', 'veronica@salvati.com', 'F', '2020-12-01', 'MT');
 
 -- --------------------------------------------------------
 
@@ -58,13 +58,21 @@ INSERT INTO `accounts` (`id`, `name`, `surname`, `username`, `password`, `email`
 
 CREATE TABLE `activity` (
   `id` int(11) NOT NULL,
-  `site` varchar(255) NOT NULL,
+  `sitesId` int(11) NOT NULL,
   `description` varchar(1000) NOT NULL,
   `estimatedTime` int(11) NOT NULL,
   `typology` varchar(255) NOT NULL,
   `interruptible` tinyint(1) NOT NULL,
   `week` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dump dei dati per la tabella `activity`
+--
+
+INSERT INTO `activity` (`id`, `sitesId`, `description`, `estimatedTime`, `typology`, `interruptible`, `week`) VALUES
+(1, 1, 'Minor electrical machine problem', 90, 'Electronics', 1, 52),
+(2, 1, 'Some machines seems to be stuck', 30, 'Mechanical', 0, 50);
 
 -- --------------------------------------------------------
 
@@ -74,12 +82,36 @@ CREATE TABLE `activity` (
 
 CREATE TABLE `materials` (
   `id` int(11) NOT NULL,
-  `sites` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `brand` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `lot` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
-  `yearProd` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  `sitesId` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dump dei dati per la tabella `materials`
+--
+
+INSERT INTO `materials` (`id`, `sitesId`, `name`) VALUES
+(1, 1, 'Tessuto A01');
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `sites`
+--
+
+CREATE TABLE `sites` (
+  `id` int(11) NOT NULL,
+  `workArea` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dump dei dati per la tabella `sites`
+--
+
+INSERT INTO `sites` (`id`, `workArea`, `name`) VALUES
+(1, 'Pellame', 'Solofra'),
+(2, 'Ingegneria', 'Scampitella');
 
 --
 -- Indici per le tabelle scaricate
@@ -97,14 +129,22 @@ ALTER TABLE `accounts`
 -- Indici per le tabelle `activity`
 --
 ALTER TABLE `activity`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `sitesId` (`sitesId`);
 
 --
 -- Indici per le tabelle `materials`
 --
 ALTER TABLE `materials`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `Lotto` (`lot`);
+  ADD KEY `sitesId` (`sitesId`) USING BTREE;
+
+--
+-- Indici per le tabelle `sites`
+--
+ALTER TABLE `sites`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ID` (`id`);
 
 --
 -- AUTO_INCREMENT per le tabelle scaricate
@@ -120,13 +160,35 @@ ALTER TABLE `accounts`
 -- AUTO_INCREMENT per la tabella `activity`
 --
 ALTER TABLE `activity`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `materials`
 --
 ALTER TABLE `materials`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT per la tabella `sites`
+--
+ALTER TABLE `sites`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- Limiti per le tabelle scaricate
+--
+
+--
+-- Limiti per la tabella `activity`
+--
+ALTER TABLE `activity`
+  ADD CONSTRAINT `activity_ibfk_1` FOREIGN KEY (`sitesId`) REFERENCES `sites` (`id`);
+
+--
+-- Limiti per la tabella `materials`
+--
+ALTER TABLE `materials`
+  ADD CONSTRAINT `materials_ibfk_1` FOREIGN KEY (`sitesId`) REFERENCES `sites` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

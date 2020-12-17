@@ -6,6 +6,7 @@
   <body>
     <div>
       <div class="container text-center login-box">
+	  
         <form action="../php/authentication.php" method="post">
           <h2>CompanyX</h2>
           <img class="mb-4 photo_logo" src="../src/images/logo.png" alt="" width="100" height="100" >
@@ -20,6 +21,7 @@
           </div>
           <button class="btn btn-block btn-blue mt-2" type="submit" name="button">Log In</button>
         </form>
+		
       </div>
     </div>
   </body>

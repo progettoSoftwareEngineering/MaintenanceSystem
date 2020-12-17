@@ -1,3 +1,8 @@
+<head>
+	<script type="text/javascript" src="../js/logout.js" charset="utf-8"></script>
+    <script type="text/javascript" src="../js/currentWeek.js" charset="utf-8"></script>
+</head>
+
 <body>
   <!-- Header with logo, menu, date and week and user -->
   <div class="container header">
@@ -32,13 +37,12 @@
 
 					<i class="fas fa-user-circle fa-4x"></i>
 					<div class="navbar-text user-btn m-0">
+					
 						<a class="nav-link text-light" href="profile.php">Profile</a>
-						<a class="nav-link text-light" href="../php/logout.php">Logout</a>
+						<a onclick="return logout()" class="nav-link text-light" href="../php/logout.php">Logout</a>
+						
 					</div>
 				</div>
 			</div>
 		</nav>
-
-
-    <script src="../js/currentWeek.js" charset="utf-8"></script>
   </div>

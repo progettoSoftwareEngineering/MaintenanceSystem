@@ -1,232 +1,216 @@
 <?php
-include("../php/session_active.php");
-
-$title = "Planner Home Page" ;
-require("partials/head.php");
+  include("../php/session_active.php");
+  $title = "Home";
+  require("partials/head.php");
 ?>
 
+<body>
 
-<body id="home">
-
-	<?php require("partials/header.php") ?>
-
-	<div class="container container-lg header sticky-top">
+<?php include("partials/header.php"); ?>
 
 
-		<div class="navbar mb-2 ">
-			<h2>Planner Home Page</h2>
 
-			<form class="form-inline" method="post" action="ricerca.php">
-				<input id="searchIn" class="form-control mr-sm-2" type="search" placeholder="Es. Activity ID" aria-label="Search" required>
-				<button id="searchBtn" class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+  <!-- Body of the page where we find activities divided by weeks -->
+  <section class="activities-for-week pt-5 mt-5">
+
+    <h2>Planned Activities by Weeks</h2>
+
+    <div class="accordion weeks container container-lg" id="accordionWeeks">
+
+    </div>
+  </section>
+
+  <!-- Plan new activity form -->
+  <section>
+    <!-- Plan activity Modal -->
+    <div class="modal fade" id="planModal" tabindex="-2" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-blue text-light">
+            <h5 class="modal-title" id="ModalLabel">Plan Activity for week</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body ">
+            <form class="form form-horizontal striped-rows" method="post" action="../php/addActivity.php">
+
+              <div class="form-body justify-content-center">
+                <!-- Week row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-week" class="col-form-label col-sm-4 text-center"><i class="far fa-calendar-minus fa-1px"></i> Week:</label>
+                  <div class="col-sm-8">
+                    <input name= "week" type="number" class="form-control" id="activity-week" min="1" max="53" placeholder="1 - 52" data-bind="value:replyNumber" required />
+                  </div>
+                </div>
+                <!-- Area row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-area" class="col-sm-4 col-form-label text-center"><i class="far fa-building fa-1px"></i>  Area:</label>
+                  <div class="col-sm-8">
+                    <select class="custom-select" id="areaSelect" name="siteId">
+          						<?php
+          						require("../php/sites.php");
+          						foreach ($sites as $value) {
+          						  $siteId = $value['id'];
+          						  $site = $value['site'];
+          						  $workArea = $value['workArea'];
+          						  echo "<option value=\"$siteId\">$site - $workArea</option>";
+          						}
+          						?>
+                    </select>
+                    </div>
+                </div>
+                <!-- Type row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-type" class="col-sm-4 col-form-label text-center">Type:</label>
+                  <div class="col-sm-8">
+                    <select class="custom-select" id="typeSelect" name="typology">
+                      <option value="Hydraulic">Hydraulic</option>
+                      <option value="Electric">Electric</option>
+                      <option value="Electronic">Electronic</option>
+                      <option value="Mechanical">Mechanical</option>
+                    </select>
+                  </div>
+                </div>
+                <!-- Estimated Intervention Time row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-intTime" class="col-sm-4 col-form-label text-center"><i class="far fa-clock fa-1px"></i> Intervention Time [min]:</label>
+                  <div class="col-sm-8 my-auto">
+                    <input name="estimatedTime" type="number" class="form-control" id="activity-intTime" min="0" placeholder="Estimated Intervention Time in minutes" data-bind="value:replyNumber"  required/>
+                  </div>
+                </div>
+                <!-- Description of the activity row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-description" class="col-sm-4 col-form-label text-center"><i class="far fa-comment fa-1px"></i> Actvity description:</label>
+                  <div class="col-sm-8">
+                    <textarea name="description" class="form-control" id="activity-description" placeholder="Insert a short description of the activity."></textarea>
+                  </div>
+                </div>
+                <!-- Interruptible activi radios row -->
+                <div class="form-group form-row py-2">
+                  <label for="activity-interruptible" class="col-sm-4 col-form-label text-center"><i class="far fa-hand-paper fa-1px"></i> Interruptible:</label>
+                  <div class="col-sm-8 my-auto" id="activvity-interruptible">
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="interruptible" id="inlineInterruptibleRadioYes" value="1" checked>
+                      <label class="form-check-label" for="inlineInterruptibleRadioYes">Yes</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" name="interruptible" id="inlineInterruptibleRadioNo" value="0">
+                      <label class="form-check-label" for="inlineInterruptibleRadioNo">No</label>
+                    </div>
+                  </div>
+                </div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+					<button type="submit" class="btn btn-blue text-light">Add Activity</button>
+				</div>
 			</form>
-		</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    </div>
+
+  </section>
+
+  <!-- Activity details Modal -->
+  <section>
+    <div class="modal fade" id="selectedModal" tabindex="-1" role="dialog" aria-labelledby="selectedModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered" role="dialog">
+        <div class="modal-content">
+          <div class="modal-header bg-blue text-light">
+            <h5 class="modal-title" id="selectedModalLabel">Selected activity # </h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <!-- Modal body -->
+          <div class="modal-body ">
+            <!-- Week and Activiti to assign row -->
+            <div class="row mb-3 justify-content-md-center">
+              <div class="col-md-4">
+                <div class="card text-center">
+                  <div class="card-header bg-warning p-2">
+                    <h6 class="card-title mb-0" for="selected-activity-week">Week n°:</h6>
+                  </div>
+                  <div class="card-body p-2">
+                    <p class="card-text" id="selected-activity-week"></p>
+                  </div>
+                </div>
 
 
-		<div class="container">
-			<h2 align="center">
-				<!-- <p>Welcome back, <?php $_SESSION['name']?>!</p> -->
-				<p>Welcome back!</p>
-			</h2>
-			<p align="center">
-				On this page you can plan your activity.
-			</p>
+              </div>
+              <div class="col-md-8">
+                <div class="card text-center">
+                  <div class="card-header bg-warning p-2">
+                    <h6 class="card-title mb-0" for="selected-activity">Activity:</h6>
+                  </div>
+                  <div class="card-body p-2">
+                    <p class="card-text" id="selected-activity"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
 
+            <!-- Intervention description row -->
+            <div class="row mb-3 justify-content-md-center">
+              <!-- Skill needed row -->
+                <div class="col-md-4">
+                  <div class="card text-center">
+                    <div class="card-header bg-warning p-2">
+                      <h6 class="card-title mb-0" for="selected-activity-workNote">Skills needed:</h6>
+                    </div>
+                    <div class="card-body p-2">
+                      <ul id="skillsNeeded" class="list-group list-group-flush">
 
+                      </ul>
+                    </div>
+                  </div>
+                </div>
 
-			<!--ACTIVITY PLANNING TABLE-->
-			<div class="text-right">
-				<div class="dropdown show">
-				  <a class="btn btn-secondary dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-				    Week N°
-				  </a>
+              <div class="col-md-8">
+                <div class="card text-center">
+                  <div class="card-header bg-warning p-2">
+                    <h6 class="card-title mb-0" for="selected-activity-description">Intervention Description:</h6>
+                  </div>
+                  <div class="card-body p-2">
+                    <p class="card-text" id="selected-activity-description"></p>
+                  </div>
+                </div>
 
-				  <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-				    <a class="dropdown-item" href="#">1</a>
-				    <a class="dropdown-item" href="#">2</a>
-				    <a class="dropdown-item" href="#">3</a>
-				  </div>
-				</div>
-			</div>
+                <!-- File row -->
+                <div class="card text-center mt-3">
+                  <div class="card-header bg-warning p-2">
+                    <h6 class="card-title mb-0" for="selected-activity-workNote">Standard Maintenance Procedure File (SMP):</h6>
+                  </div>
+                  <div class="card-body p-2">
+                    <i class="far fa-file-pdf fa-2px"></i>
+                    <a id="SMPFile" download target="_blank" class="text-decoration-none">Open file</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
-			<div class="table-responsive mt-4">
-				<table class="table table-striped table-hover table-sm text-center">
-					<thead class="thead-dark">
-						<tr>
-							<th>ID</th>
-							<th>Area</th>
-							<th>Tipology</th>
-							<th>Estimate Intervention Time</th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>24332</td>
-							<td>Fisciano</td>
-							<td>Electric</td>
-							<td>123</td>
-							<td>
-								<button data-toggle="modal" data-target="#selectedModal" type="button" class="btn btn-sm btn-block btn-outline-primary">Select</button>
-							</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-blue text-light disabled" disabled>Forward</button>
+          </div>
+        </div>
+      </div>
+    </div>
 
-			<form class="form-inline">
-			  <label class="sr-only" for="inlineFormInputArea">Area</label>
-			  <input type="text" class="form-control mb-2 mr-sm-2" id="inlineFormInputArea" placeholder="Area">
+    </div>
 
-			  <label class="sr-only" for="inlineFormInputType">Type</label>
-				<select class="custom-select mb-2 mr-sm-2" id="inlineFormCustomSelectPref">
-				  <option selected>Choose Type</option>
-				  <option value="1">Electric</option>
-				  <option value="2">Electronic</option>
-				  <option value="3">Hydraulic</option>
-					<option value="3">Mechanical</option>
-				</select>
+  </section>
 
-				<label class="sr-only" for="inlineFormInputArea">Intervention Time</label>
-				<div class="input-group mb-2 mr-sm-2">
-					<div class="input-group-prepend">
-			      <div class="input-group-text"><i class="far fa-clock fa"></i></div>
-			    </div>
-					<input type="number" class="form-control" id="inlineFormInputIntTime" min="0" placeholder="Est. Time '" data-bind="value:replyNumber"/>
-				</div>
-
-			  <button type="submit" class="btn btn-primary mb-2 mr-2">Submit</button>
-				<button type="button" class="btn btn-danger mb-2 " name="button">Delete</button>
-			</form>
-		</div>
-	</div>
-
-			<!-- <input type="button" value="Add Activity" onclick="addRow('dataTable')" />
-			<input type="button" value="Delete Activity" onclick="deleteRow('dataTable')" /> -->
-
-
-			<!-- Open when the press the select button -->
-			<section>
-				<div class="modal fade" id="selectedModal" tabindex="-1" role="dialog" aria-labelledby="selectedModalLabel" aria-hidden="true">
-					<div class="modal-dialog modal-lg modal-dialog-centered" role="dialog">
-						<div class="modal-content">
-							<div class="modal-header bg-blue text-light">
-								<h5 class="modal-title" id="selectedModalLabel">Selected activity # </h5>
-								<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-									<span aria-hidden="true">&times;</span>
-								</button>
-							</div>
-							<!-- Modal body -->
-							<div class="modal-body ">
-								<!-- Week and Activiti to assign row -->
-								<div class="row mb-3">
-									<div class="col-md-4">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-week">Week n°:</h6>
-											</div>
-											<div class="card-body p-2">
-												<p class="card-text" id="selected-activity-week"></p>
-											</div>
-										</div>
-
-
-									</div>
-									<div class="col-md-8">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity">Activity:</h6>
-											</div>
-											<div class="card-body p-2">
-												<p class="card-text" id="selected-activity"></p>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<!-- Workspace note and Intervention description row -->
-								<div class="row mb-3">
-									<div class="col-md-6">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-workNote">Workspace Notes:</h6>
-											</div>
-											<div class="card-body p-2">
-												<p class="card-text" id="selected-activity-workNote"></p>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-6">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-description">Intervention Description:</h6>
-											</div>
-											<div class="card-body p-2">
-												<p class="card-text" id="selected-activity-description"></p>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<!-- Skill needed row -->
-								<div class="row mb-3">
-									<div class="col-md-12">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-workNote">Skills needed:</h6>
-											</div>
-											<div class="card-body p-2">
-												<ul id="skillsNeeded" class="list-group list-group-flush">
-
-												</ul>
-											</div>
-										</div>
-									</div>
-								</div>
-								<!-- File row -->
-								<div class="row mb-3 justify-content-md-center">
-									<div class="col-md-auto">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-workNote">Standard Maintenance Procedure File (SMP):</h6>
-											</div>
-											<div class="card-body p-2">
-												<i class="far fa-file-pdf fa-2px"></i>
-												<a href="file.pdf" download target="_blank" class="text-decoration-none">Open file</a>
-											</div>
-										</div>
-									</div>
-								</div>
-
-								<div class="row mb-3 justify-content-md-center">
-									<div class="col-md-auto">
-										<div class="card text-center">
-											<div class="card-header bg-warning p-2">
-												<h6 class="card-title mb-0" for="selected-activity-workNote">Maintener Availability:</h6>
-											</div>
-											<div class="card-body p-2">
-												<i class="far fa-file-pdf fa-2px"></i>
-												<a href="file.pdf" download target="_blank" class="text-decoration-none">Open file</a>
-											</div>
-										</div>
-									</div>
-								</div>
-
-							</div>
-
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-								<button type="button" class="btn btn-blue text-light">Forward</button>
-							</div>
-						</div>
-					</div>
-				</div>
-
-		</div>
-
-		</section>
+  <!-- script javascript and jquery  -->
+  <script type="text/javascript" src='../js/main.js'></script>
 
 </body>
-	<?php require("partials/footer.php") ?>
+
+<?php require("partials/footer.php"); ?>
 
 </html>

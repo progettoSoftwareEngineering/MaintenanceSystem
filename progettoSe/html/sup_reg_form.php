@@ -1,5 +1,5 @@
 <?php
-session_start();
+include("../php/session_active.php");
 setcookie("auth_cookie", "stop");
 $title = "SA Add New User";
 require("../html/partials/head.php");
@@ -10,6 +10,7 @@ require("../html/partials/head.php");
 
 	<div class="container registration-box mt-5">
 		<h2>New user registration form</h2>
+		
 		<form name="form_registration" method="post" action="../php/registration.php">
 		  <div class="form-row mb-3">
 		    <div class="form-group col-md-6">
